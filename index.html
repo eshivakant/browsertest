@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser Feature Check</title>
+</head>
+<body>
+  <h1>Browser Feature Check</h1>
+  <p id="localStorageSupport">Checking localStorage support...</p>
+  <p id="thirdPartyCookieSupport">Checking third-party cookie support...</p>
+
+  <script>
+    // Check for localStorage support
+    function checkLocalStorageSupport() {
+      try {
+        localStorage.setItem("testkey", "testvalue");
+        localStorage.removeItem("testkey");
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    // Check for third-party cookie support
+    function checkThirdPartyCookieSupport() {
+      return new Promise((resolve) => {
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = "https://example.com/iframe.html"; // Use a URL from a different domain
+
+        document.body.appendChild(iframe);
+
+        iframe.onload = () => {
+          try {
+            iframe.contentWindow.document.cookie = "testcookie=1";
+            resolve(iframe.contentWindow.document.cookie.includes("testcookie"));
+          } catch (error) {
+            resolve(false);
+          } finally {
+            document.body.removeChild(iframe);
+          }
+        };
+      });
+    }
+
+    // Display results on the page
+    document.getElementById("localStorageSupport").innerText = 
+      "localStorage supported: " + (checkLocalStorageSupport() ? "Yes" : "No");
+
+    checkThirdPartyCookieSupport().then((isSupported) => {
+      document.getElementById("thirdPartyCookieSupport").innerText = 
+        "Third-party cookies supported: " + (isSupported ? "Yes" : "No");
+    });
+  </script>
+</body>
+</html>
