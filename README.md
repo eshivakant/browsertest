@@ -1,0 +1,2 @@
+# browsertest
+Tests browser capabilities
